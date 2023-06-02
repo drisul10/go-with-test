@@ -24,12 +24,12 @@ func (r Rectangle) Area() float64 {
 }
 
 type Triangle struct {
-	Width  float64
+	Base   float64
 	Height float64
 }
 
 func (r Triangle) Area() float64 {
-	return 0.5 * r.Width * r.Height
+	return 0.5 * r.Base * r.Height
 }
 
 func Perimeter(rectangle Rectangle) float64 {
