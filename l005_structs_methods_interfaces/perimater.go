@@ -23,6 +23,15 @@ func (r Rectangle) Area() float64 {
 	return r.Width * r.Height
 }
 
+type Triangle struct {
+	Width  float64
+	Height float64
+}
+
+func (r Triangle) Area() float64 {
+	return 0.5 * r.Width * r.Height
+}
+
 func Perimeter(rectangle Rectangle) float64 {
 	return 2 * (rectangle.Width + rectangle.Height)
 }
