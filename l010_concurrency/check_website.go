@@ -31,13 +31,19 @@ func CheckWebsites(wc WebsiteChecker, urls []string) map[string]bool {
 	return results
 }
 
+var tenSecondTimeout = 10 * time.Second
+
 func RacerWebsites(webA, webB string) (winner string, err error) {
+	return ConfigurableRacerWebsites(webA, webB, tenSecondTimeout)
+}
+
+func ConfigurableRacerWebsites(webA, webB string, timeout time.Duration) (winner string, err error) {
 	select {
 	case <-ping(webA):
 		return webA, nil
 	case <-ping(webB):
 		return webB, nil
-	case <-time.After(10 * time.Second):
+	case <-time.After(timeout):
 		return "", fmt.Errorf("timed out waiting for %s and %s", webA, webB)
 	}
 }
