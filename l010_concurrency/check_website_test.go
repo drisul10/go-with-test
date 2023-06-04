@@ -47,3 +47,15 @@ func TestCheckWebsites(t *testing.T) {
 		t.Errorf("got %v, want %v", got, want)
 	}
 }
+
+func TestRacerWebsites(t *testing.T) {
+	slowURL := "https://guthib.com/"
+	fastURL := "https://github.com"
+
+	want := fastURL
+	got := RacerWebsites(slowURL, fastURL)
+
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
