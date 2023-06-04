@@ -31,17 +31,18 @@ func CheckWebsites(wc WebsiteChecker, urls []string) map[string]bool {
 }
 
 func RacerWebsites(webA, webB string) (winner string) {
-	startA := time.Now()
-	http.Get(webA)
-	durationA := time.Since(startA)
-
-	startB := time.Now()
-	http.Get(webB)
-	durationB := time.Since(startB)
+	durationA := measureResponseTime(webA)
+	durationB := measureResponseTime(webB)
 
 	if durationA < durationB {
 		return webA
 	}
 
 	return webB
+}
+
+func measureResponseTime(url string) time.Duration {
+	start := time.Now()
+	http.Get(url)
+	return time.Since(start)
 }
