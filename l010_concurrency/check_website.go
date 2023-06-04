@@ -1,7 +1,9 @@
 package concurrency
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 )
 
 type WebsiteChecker func(string) bool
@@ -29,12 +31,14 @@ func CheckWebsites(wc WebsiteChecker, urls []string) map[string]bool {
 	return results
 }
 
-func RacerWebsites(webA, webB string) (winner string) {
+func RacerWebsites(webA, webB string) (winner string, err error) {
 	select {
 	case <-ping(webA):
-		return webA
+		return webA, nil
 	case <-ping(webB):
-		return webB
+		return webB, nil
+	case <-time.After(10 * time.Second):
+		return "", fmt.Errorf("timed out waiting for %s and %s", webA, webB)
 	}
 }
 
