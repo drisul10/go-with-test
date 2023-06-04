@@ -2,7 +2,6 @@ package concurrency
 
 import (
 	"net/http"
-	"time"
 )
 
 type WebsiteChecker func(string) bool
@@ -31,18 +30,20 @@ func CheckWebsites(wc WebsiteChecker, urls []string) map[string]bool {
 }
 
 func RacerWebsites(webA, webB string) (winner string) {
-	durationA := measureResponseTime(webA)
-	durationB := measureResponseTime(webB)
-
-	if durationA < durationB {
+	select {
+	case <-ping(webA):
 		return webA
+	case <-ping(webB):
+		return webB
 	}
-
-	return webB
 }
 
-func measureResponseTime(url string) time.Duration {
-	start := time.Now()
-	http.Get(url)
-	return time.Since(start)
+func ping(url string) chan struct{} {
+	ch := make(chan struct{})
+	go func() {
+		http.Get(url)
+		close(ch)
+	}()
+
+	return ch
 }
