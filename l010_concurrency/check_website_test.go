@@ -1,6 +1,8 @@
 package concurrency
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
@@ -49,8 +51,17 @@ func TestCheckWebsites(t *testing.T) {
 }
 
 func TestRacerWebsites(t *testing.T) {
-	slowURL := "https://guthib.com/"
-	fastURL := "https://github.com"
+	slowServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(1 * time.Nanosecond)
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	fastServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	slowURL := slowServer.URL
+	fastURL := fastServer.URL
 
 	want := fastURL
 	got := RacerWebsites(slowURL, fastURL)
@@ -58,4 +69,7 @@ func TestRacerWebsites(t *testing.T) {
 	if got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
+
+	slowServer.Close()
+	fastServer.Close()
 }
